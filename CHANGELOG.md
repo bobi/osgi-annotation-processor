@@ -2,7 +2,9 @@
 
 # osgi-annotation-processor Changelog
 ## [Unreleased]     
+## [0.0.2]     
 ### Changed
+- Fix compatibility issue
 - Fixed github build
 
 ## [0.0.1]
