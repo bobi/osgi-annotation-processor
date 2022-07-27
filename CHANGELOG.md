@@ -1,7 +1,10 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # osgi-annotation-processor Changelog
+## [Unreleased]     
+### Changed
+- Fixed github build
 
-## [Released 0.0.1]
+## [0.0.1]
 ### Added
 - Initial Release

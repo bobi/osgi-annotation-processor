@@ -4,6 +4,7 @@
     <name>OSGI SCR Annotation Processor</name>
     <vendor>bobi</vendor>
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.github.bobi.osgiannotationprocessor.settings.OSGIScrProjectSettings"/>
