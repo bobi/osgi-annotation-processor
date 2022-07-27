@@ -2,6 +2,10 @@ tasks {
     jar {
         archiveFileName.set("osgi-jps-plugin.jar")
     }
+
+    verifyPlugin {
+        enabled = false
+    }
 }
 
 dependencies {
