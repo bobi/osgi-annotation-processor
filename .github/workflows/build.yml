@@ -168,10 +168,7 @@ jobs:
       - name: Prepare Plugin Package
         shell: bash
         run: |
-          echo ${{ needs.build.outputs.pluginName }}
-
           cd artifact
-          ls -R
           
           zip -r ${{ needs.build.outputs.filename }}.zip ${{ needs.build.outputs.pluginName }}
 
@@ -180,5 +177,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd artifact
+          
           gh release upload v${{ needs.build.outputs.version }} \
             ${{ needs.build.outputs.filename }}.zip
