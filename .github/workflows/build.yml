@@ -31,7 +31,7 @@ jobs:
     outputs:
       version: ${{ steps.properties.outputs.version }}
       changelog: ${{ steps.properties.outputs.changelog }}
-      name: ${{ steps.artifact.outputs.name }}
+      pluginName: ${{ steps.properties.outputs.name }}
       filename: ${{ steps.artifact.outputs.filename }}
     steps:
 
@@ -163,16 +163,22 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ needs.build.outputs.filename }}
+          path: ./artifact
 
       - name: Prepare Plugin Package
         shell: bash
         run: |
+          echo ${{ needs.build.outputs.pluginName }}
+
+          cd artifact
           ls -R
-          zip -r ${{ needs.build.outputs.filename }}.zip ${{ needs.build.outputs.name }}
+          
+          zip -r ${{ needs.build.outputs.filename }}.zip ${{ needs.build.outputs.pluginName }}
 
       - name: Upload Plugin Artifact To Release Draft
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd artifact
           gh release upload v${{ needs.build.outputs.version }} \
             ${{ needs.build.outputs.filename }}.zip
