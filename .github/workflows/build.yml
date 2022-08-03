@@ -31,8 +31,6 @@ jobs:
     outputs:
       version: ${{ steps.properties.outputs.version }}
       changelog: ${{ steps.properties.outputs.changelog }}
-      pluginName: ${{ steps.properties.outputs.name }}
-      filename: ${{ steps.artifact.outputs.filename }}
     steps:
 
       # Check out current repository
@@ -158,25 +156,3 @@ jobs:
           ${{ needs.build.outputs.changelog }}
           EOM
           )"
-
-      - name: Download Plugin Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ needs.build.outputs.filename }}
-          path: ./artifact
-
-      - name: Prepare Plugin Package
-        shell: bash
-        run: |
-          cd artifact
-          
-          zip -r ${{ needs.build.outputs.filename }}.zip ${{ needs.build.outputs.pluginName }}
-
-      - name: Upload Plugin Artifact To Release Draft
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd artifact
-          
-          gh release upload v${{ needs.build.outputs.version }} \
-            ${{ needs.build.outputs.filename }}.zip

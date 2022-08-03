@@ -1,7 +1,8 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # osgi-annotation-processor Changelog
-## [Unreleased]     
+## [Unreleased]  
+
 ## [0.0.2]     
 ### Changed
 - Fix compatibility issue
