@@ -10,6 +10,14 @@ tasks {
     buildSearchableOptions {
         enabled = false
     }
+
+    signPlugin {
+        enabled = false
+    }
+
+    publishPlugin {
+        enabled = false
+    }
 }
 
 dependencies {
