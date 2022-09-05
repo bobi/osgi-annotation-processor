@@ -1,4 +1,4 @@
-package org.jetbrains.osgi.jps
+package org.jetbrains.osgi.jps.com.github.bobi.osgiannotationprocessor.jps
 
 import com.github.bobi.osgiannotationprocessor.jps.JPSSCRExtensionService
 import com.github.bobi.osgiannotationprocessor.settings.OSGIScrConfigurationImpl
