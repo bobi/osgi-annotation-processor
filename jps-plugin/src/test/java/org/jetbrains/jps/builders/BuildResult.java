@@ -13,10 +13,10 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
-import gnu.trove.TIntHashSet;
 import gnu.trove.TIntObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
 import org.jetbrains.jps.cmdline.ProjectDescriptor;
@@ -99,13 +99,12 @@ public final class BuildResult implements MessageHandler {
         Collections.sort(keys);
         stream.println("Begin Of OutputToTarget");
         for (Integer key : keys) {
-            TIntHashSet targetsIds = registry.getState(key);
+            IntSet targetsIds = registry.getState(key);
             if (targetsIds == null) {continue;}
             final List<String> targetsNames = new ArrayList<>();
             targetsIds.forEach(value -> {
                 BuildTarget<?> target = id2Target.get(value);
                 targetsNames.add(target != null ? getTargetIdWithTypeId(target) : "<unknown " + value + ">");
-                return true;
             });
             Collections.sort(targetsNames);
             stream.println(hashCodeToOutputPath.get(key) + " -> " + targetsNames);

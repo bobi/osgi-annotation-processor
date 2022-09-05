@@ -4,10 +4,10 @@ import com.github.bobi.osgiannotationprocessor.settings.OSGIScrProjectSettings
 import com.github.bobi.osgiannotationprocessor.settings.OSGIScrSpec
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.layout.and
 
 /**
  * User: Andrey Bardashevsky
@@ -20,86 +20,70 @@ class OSGIScrSettingsConfigurable(private val project: Project) : BoundConfigura
 
     private val settings get() = OSGIScrProjectSettings.getInstance(project)
 
-    override fun createPanel(): DialogPanel = panel {
-        lateinit var enableCheckBox: CellBuilder<JBCheckBox>
+    @Suppress("DialogTitleCapitalization")
+    override fun createPanel() = panel {
+        lateinit var enableCheckBox: Cell<JBCheckBox>
 
         row {
             enableCheckBox = checkBox("Enable")
-                .withSelectedBinding(settings::enabled.toBinding())
+                .bindSelected(settings::enabled)
         }
 
-        titledRow("General Settings") {
-            lateinit var manualSpecCheckBox: CellBuilder<JBCheckBox>
+        group("General Settings") {
+            lateinit var manualSpecCheckBox: Cell<JBCheckBox>
 
             row {
                 manualSpecCheckBox = checkBox("Set Specification Version Manually")
-                    .withSelectedBinding(settings::manualSpec.toBinding())
-                    .enableIf(enableCheckBox.selected)
+                    .bindSelected(settings::manualSpec)
+                    .enabledIf(enableCheckBox.selected)
             }
             row("Specification Version:") {
-                comboBox(
-                    specVersionsModel,
-                    { SpecComboDecorator(settings.spec) },
-                    { if (it?.spec != null) settings.spec = it.spec })
-                    .withLeftGap()
-                    .enableIf(enableCheckBox.selected and manualSpecCheckBox.selected)
+                comboBox(specVersionsModel)
+                    .bindItem(
+                        { SpecComboDecorator(settings.spec) },
+                        { if (it?.spec != null) settings.spec = it.spec }
+                    )
+                    .enabledIf(enableCheckBox.selected and manualSpecCheckBox.selected)
             }
             row {
                 checkBox("Strict Mode")
-                    .withSelectedBinding(settings::strictMode.toBinding())
-                    .enableIf(enableCheckBox.selected)
+                    .bindSelected(settings::strictMode)
+                    .enabledIf(enableCheckBox.selected)
             }
             row {
                 checkBox("Skip Tests")
-                    .withSelectedBinding(settings::skipTests.toBinding())
-                    .enableIf(enableCheckBox.selected)
+                    .bindSelected(settings::skipTests)
+                    .enabledIf(enableCheckBox.selected)
             }
             row {
                 checkBox("Debug Logging")
-                    .withSelectedBinding(settings::debugLogging.toBinding())
-                    .enableIf(enableCheckBox.selected)
+                    .bindSelected(settings::debugLogging)
+                    .enabledIf(enableCheckBox.selected)
             }
         }
 
-        blockRow {
-            lateinit var felixEnableCheckBox: CellBuilder<JBCheckBox>
+        group("Felix Specific Settings") {
+            lateinit var felixEnableCheckBox: Cell<JBCheckBox>
             row {
                 felixEnableCheckBox = checkBox("Enable Felix SCR Annotation Processing")
-                    .withSelectedBinding(settings::felixEnabled.toBinding())
-                    .enableIf(enableCheckBox.selected)
+                    .bindSelected(settings::felixEnabled)
+                    .enabledIf(enableCheckBox.selected)
             }
 
-            titledRow("Felix Specific Settings") {
-                row {
-                    checkBox("Generate Accessors")
-                        .withSelectedBinding(settings::generateAccessors.toBinding())
-                        .enableIf(enableCheckBox.selected and felixEnableCheckBox.selected)
-                }
-                row {
-                    checkBox("Optimized Build")
-                        .withSelectedBinding(settings::optimizedBuild.toBinding())
-                        .enableIf(enableCheckBox.selected and felixEnableCheckBox.selected)
-                }
+            row {
+                checkBox("Generate Accessors")
+                    .bindSelected(settings::generateAccessors)
+                    .enabledIf(enableCheckBox.selected and felixEnableCheckBox.selected)
+            }
+            row {
+                checkBox("Optimized Build")
+                    .bindSelected(settings::optimizedBuild)
+                    .enabledIf(enableCheckBox.selected and felixEnableCheckBox.selected)
             }
         }
     }
 
-    private class SpecComboDecorator(val spec: OSGIScrSpec) {
-        override fun toString(): String {
-            return spec.version
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is SpecComboDecorator) return false
-
-            if (spec != other.spec) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return spec.hashCode()
-        }
+    private data class SpecComboDecorator(val spec: OSGIScrSpec) {
+        override fun toString() = spec.version
     }
 }

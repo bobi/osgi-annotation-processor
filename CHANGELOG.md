@@ -1,7 +1,10 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # osgi-annotation-processor Changelog
-## [Unreleased]  
+
+## [Unreleased]
+### Changed
+- Updated min supported Intellij version
 
 ## [0.0.2]     
 ### Changed

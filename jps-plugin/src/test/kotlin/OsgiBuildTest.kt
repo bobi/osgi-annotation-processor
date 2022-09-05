@@ -7,6 +7,7 @@ import org.jetbrains.jps.model.java.JpsJavaLibraryType
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.junit.Test
 import java.io.File
 
 class OsgiBuildTest : OsgiBuildTestCase() {
@@ -52,7 +53,8 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
         myModule.dependenciesList.addLibraryDependency(library)
     }
-
+    
+    @Test
     fun testGenerateXml() {
         createFile("main/src/main/a/Service.java", serviceInterfaceSrc)
         createFile("main/src/main/a/impl/ServiceImpl.java", serviceSrc)
