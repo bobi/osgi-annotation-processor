@@ -10,7 +10,6 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.jps.incremental.CompileScope;
 import org.jetbrains.jps.incremental.CompileScopeImpl;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
-import org.jetbrains.jps.incremental.TargetTypeRegistry;
 import org.jetbrains.jps.incremental.artifacts.ArtifactBuildTarget;
 import org.jetbrains.jps.incremental.artifacts.ArtifactBuildTargetType;
 import org.jetbrains.jps.model.artifact.JpsArtifact;
@@ -90,16 +89,6 @@ public final class CompileScopeTestBuilder {
             typesToForceBuild = Collections.emptyList();
         }
         return new CompileScopeImpl(myTargetTypes, typesToForceBuild, myTargets, myFiles);
-    }
-
-    /**
-     * Add all targets in the project to the scope. May lead to unpredictable results if some plugins add targets your test doesn't expect.
-     *
-     * @deprecated use {@link #allModules()} instead or directly add required target types via {@link #targetTypes}
-     */
-    public CompileScopeTestBuilder all() {
-        myTargetTypes.addAll(TargetTypeRegistry.getInstance().getTargetTypes());
-        return this;
     }
 
     public CompileScopeTestBuilder artifacts(JpsArtifact... artifacts) {
