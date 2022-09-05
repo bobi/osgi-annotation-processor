@@ -1,169 +1,168 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.jps.builders;
+package org.jetbrains.osgi.jps.org.jetbrains.jps.builders
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ObjectUtils
+import gnu.trove.TIntObjectHashMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.ints.IntConsumer
+import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.cmdline.ProjectDescriptor
+import org.jetbrains.jps.incremental.MessageHandler
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.DoneSomethingNotification
+import org.junit.Assert
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ObjectUtils;
-import gnu.trove.TIntObjectHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
-import org.jetbrains.jps.cmdline.ProjectDescriptor;
-import org.jetbrains.jps.incremental.MessageHandler;
-import org.jetbrains.jps.incremental.messages.BuildMessage;
-import org.jetbrains.jps.incremental.messages.DoneSomethingNotification;
-import org.jetbrains.jps.incremental.storage.OutputToTargetRegistry;
+class BuildResult : MessageHandler {
+    private val myErrorMessages: MutableList<BuildMessage> = mutableListOf()
+    private val myWarnMessages: MutableList<BuildMessage> = mutableListOf()
+    private val myInfoMessages: MutableList<BuildMessage> = mutableListOf()
 
-import static org.junit.Assert.*;
+    private var myUpToDate = true
 
-public final class BuildResult implements MessageHandler {
+    var mappingsDump: String? = null
+        private set
 
-    private final List<BuildMessage> myErrorMessages;
+    fun storeMappingsDump(pd: ProjectDescriptor) {
+        mappingsDump = ByteArrayOutputStream().use { dump ->
 
-    private final List<BuildMessage> myWarnMessages;
+            PrintStream(dump).use { stream ->
+                pd.dataManager.mappings.toStream(stream)
 
-    private final List<BuildMessage> myInfoMessages;
-
-    private boolean myUpToDate = true;
-
-    private String myMappingsDump;
-
-    public BuildResult() {
-        myErrorMessages = new ArrayList<>();
-        myWarnMessages = new ArrayList<>();
-        myInfoMessages = new ArrayList<>();
-    }
-
-    void storeMappingsDump(ProjectDescriptor pd) throws IOException {
-        final ByteArrayOutputStream dump = new ByteArrayOutputStream();
-
-        try (PrintStream stream = new PrintStream(dump)) {
-            pd.dataManager.getMappings().toStream(stream);
-            dumpSourceToOutputMappings(pd, stream);
-        }
-
-        dump.close();
-        myMappingsDump = dump.toString();
-    }
-
-    private static void dumpSourceToOutputMappings(ProjectDescriptor pd, PrintStream stream) throws IOException {
-        List<BuildTarget<?>> targets = new ArrayList<>(pd.getBuildTargetIndex().getAllTargets());
-        targets.sort((o1, o2) ->
-            StringUtil.comparePairs(
-                o1.getTargetType().getTypeId(),
-                o1.getId(),
-                o2.getTargetType().getTypeId(),
-                o2.getId(),
-                false
-            )
-        );
-        final Int2ObjectMap<BuildTarget<?>> id2Target = new Int2ObjectOpenHashMap<>();
-        for (BuildTarget<?> target : targets) {
-            id2Target.put(pd.dataManager.getTargetsState().getBuildTargetId(target), target);
-        }
-        TIntObjectHashMap<String> hashCodeToOutputPath = new TIntObjectHashMap<>();
-        for (BuildTarget<?> target : targets) {
-            stream.println("Begin Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")");
-            SourceToOutputMapping map = pd.dataManager.getSourceToOutputMap(target);
-            List<String> sourcesList = new ArrayList<>(map.getSources());
-            Collections.sort(sourcesList);
-            for (String source : sourcesList) {
-                List<String> outputs = new ArrayList<>(ObjectUtils.notNull(
-                    map.getOutputs(source),
-                    Collections.emptySet()
-                ));
-                Collections.sort(outputs);
-                for (String output : outputs) {
-                    hashCodeToOutputPath.put(FileUtil.pathHashCode(output), output);
-                }
-                String sourceToCompare = SystemInfo.isFileSystemCaseSensitive ? source : source.toLowerCase(Locale.US);
-                stream.println(" " + sourceToCompare + " -> " + StringUtil.join(outputs, ","));
+                dumpSourceToOutputMappings(pd, stream)
             }
-            stream.println("End Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")");
-        }
 
-
-        OutputToTargetRegistry registry = pd.dataManager.getOutputToTargetRegistry();
-        List<Integer> keys = new ArrayList<>(registry.getKeys());
-        Collections.sort(keys);
-        stream.println("Begin Of OutputToTarget");
-        for (Integer key : keys) {
-            IntSet targetsIds = registry.getState(key);
-            if (targetsIds == null) {continue;}
-            final List<String> targetsNames = new ArrayList<>();
-            targetsIds.forEach(value -> {
-                BuildTarget<?> target = id2Target.get(value);
-                targetsNames.add(target != null ? getTargetIdWithTypeId(target) : "<unknown " + value + ">");
-            });
-            Collections.sort(targetsNames);
-            stream.println(hashCodeToOutputPath.get(key) + " -> " + targetsNames);
-        }
-        stream.println("End Of OutputToTarget");
-    }
-
-    @NotNull
-    private static String getTargetIdWithTypeId(BuildTarget<?> target) {
-        return target.getTargetType().getTypeId() + ":" + target.getId();
-    }
-
-    @Override
-    public void processMessage(BuildMessage msg) {
-        if (msg.getKind() == BuildMessage.Kind.ERROR) {
-            myErrorMessages.add(msg);
-            myUpToDate = false;
-        } else if (msg.getKind() == BuildMessage.Kind.WARNING) {
-            myWarnMessages.add(msg);
-        } else {
-            myInfoMessages.add(msg);
-        }
-        if (msg instanceof DoneSomethingNotification) {
-            myUpToDate = false;
+            return@use dump.toString()
         }
     }
 
-    public String getMappingsDump() {
-        return myMappingsDump;
-    }
+    override fun processMessage(msg: BuildMessage) {
+        when (msg.kind) {
+            BuildMessage.Kind.ERROR -> {
+                myErrorMessages.add(msg)
+                myUpToDate = false
+            }
 
-    public void assertUpToDate() {
-        assertTrue("Project sources weren't up to date", myUpToDate);
-    }
+            BuildMessage.Kind.WARNING -> {
+                myWarnMessages.add(msg)
+            }
 
-    public void assertFailed() {
-        assertFalse("Build not failed as expected", isSuccessful());
-    }
-
-    public boolean isSuccessful() {
-        return myErrorMessages.isEmpty();
-    }
-
-    public void assertSuccessful() {
-        if (!isSuccessful()) {
-            fail("Build failed.\n" +
-                "Errors:\n" + StringUtil.join(myErrorMessages, "\n") + "\n" +
-                "Info messages:\n" + StringUtil.join(myInfoMessages, "\n"));
+            else -> {
+                myInfoMessages.add(msg)
+            }
+        }
+        if (msg is DoneSomethingNotification) {
+            myUpToDate = false
         }
     }
 
-    @NotNull
-    public List<BuildMessage> getMessages(@NotNull BuildMessage.Kind kind) {
-        if (kind == BuildMessage.Kind.ERROR) {
-            return myErrorMessages;
-        } else if (kind == BuildMessage.Kind.WARNING) {
-            return myWarnMessages;
-        } else {
-            return myInfoMessages;
+    fun assertUpToDate() {
+        Assert.assertTrue("Project sources weren't up to date", myUpToDate)
+    }
+
+    fun assertFailed() {
+        Assert.assertFalse("Build not failed as expected", isSuccessful)
+    }
+
+    private val isSuccessful: Boolean
+        get() = myErrorMessages.isEmpty()
+
+    fun assertSuccessful() {
+        if (!isSuccessful) {
+            Assert.fail(
+                """
+    Build failed.
+    Errors:
+    ${StringUtil.join(myErrorMessages, "\n")}
+    Info messages:
+    ${StringUtil.join(myInfoMessages, "\n")}
+    """.trimIndent()
+            )
+        }
+    }
+
+    fun getMessages(kind: BuildMessage.Kind): List<BuildMessage> {
+        return when (kind) {
+            BuildMessage.Kind.ERROR -> {
+                myErrorMessages
+            }
+
+            BuildMessage.Kind.WARNING -> {
+                myWarnMessages
+            }
+
+            else -> {
+                myInfoMessages
+            }
+        }
+    }
+
+    companion object {
+        private fun dumpSourceToOutputMappings(pd: ProjectDescriptor, stream: PrintStream) {
+            val targets = pd.buildTargetIndex.allTargets.toMutableList()
+
+            targets.sortWith { o1: BuildTarget<*>, o2: BuildTarget<*> ->
+                StringUtil.comparePairs(
+                    o1.targetType.typeId,
+                    o1.id,
+                    o2.targetType.typeId,
+                    o2.id,
+                    false
+                )
+            }
+
+            val id2Target: Int2ObjectMap<BuildTarget<*>> = Int2ObjectOpenHashMap()
+            for (target in targets) {
+                id2Target.put(pd.dataManager.targetsState.getBuildTargetId(target), target)
+            }
+            val hashCodeToOutputPath = TIntObjectHashMap<String>()
+            for (target in targets) {
+                stream.println("Begin Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")")
+                val map = pd.dataManager.getSourceToOutputMap(target)
+                val sourcesList = map.sources.toMutableList()
+
+                sourcesList.sort()
+
+                for (source in sourcesList) {
+                    val outputs = ObjectUtils.notNull(map.getOutputs(source), emptySet()).toMutableList()
+
+                    outputs.sort()
+
+                    for (output in outputs) {
+                        hashCodeToOutputPath.put(FileUtil.pathHashCode(output), output)
+                    }
+                    val sourceToCompare = if (SystemInfo.isFileSystemCaseSensitive) source else source.lowercase()
+                    stream.println(" " + sourceToCompare + " -> " + StringUtil.join(outputs, ","))
+                }
+                stream.println("End Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")")
+            }
+            val registry = pd.dataManager.outputToTargetRegistry
+            val keys = registry.keys.toMutableList()
+            keys.sort()
+
+            stream.println("Begin Of OutputToTarget")
+            for (key in keys) {
+                val targetsIds = registry.getState(key) ?: continue
+                val targetsNames: MutableList<String> = ArrayList()
+                targetsIds.forEach(IntConsumer { value: Int ->
+                    val target = id2Target[value]
+                    targetsNames.add(if (target != null) getTargetIdWithTypeId(target) else "<unknown $value>")
+                })
+
+                targetsNames.sort()
+
+                stream.println(hashCodeToOutputPath[key] + " -> " + targetsNames)
+            }
+            stream.println("End Of OutputToTarget")
+        }
+
+        private fun getTargetIdWithTypeId(target: BuildTarget<*>): String {
+            return target.targetType.typeId + ":" + target.id
         }
     }
 }
