@@ -7,9 +7,6 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService
-                serviceImplementation="com.github.bobi.osgiannotationprocessor.settings.OSGIScrProjectSettings"/>
-
         <projectConfigurable id="language.OSGIScrProjectSettings"
                              parentId="language"
                              instance="com.github.bobi.osgiannotationprocessor.settings.ui.OSGIScrSettingsConfigurable"/>
