@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Update minimum supported Intellij version
+
 ## [0.1.0]
 ### Changed
 - Updated min supported Intellij version

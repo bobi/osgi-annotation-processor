@@ -41,7 +41,6 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.osgi.jps.org.jetbrains.jps.builders.BuildResult
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths

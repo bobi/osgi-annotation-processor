@@ -1,10 +1,35 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun properties(key: String) = providers.gradleProperty(key)
+
+plugins {
+    id("java") // Java support
+    alias(libs.plugins.kotlin) // Kotlin support
+    alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
+}
+
+version = properties("pluginVersion").get()
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(libs.bundles.bndlib) {
+        exclude(group = "org.slf4j")
+    }
+}
+
+kotlin {
+    jvmToolchain(8)
+}
+
+intellij {
+    version = properties("platformVersion")
+    type = properties("platformType")
+    plugins = listOf("com.intellij.java")
+}
 
 tasks {
-    jar {
-        archiveFileName.set("osgi-jps-plugin.jar")
-    }
-
     verifyPlugin {
         enabled = false
     }
@@ -24,21 +49,4 @@ tasks {
     runIde {
         enabled = false
     }
-
-    project.findProperty("jpsJavaTargetVersion").toString().let {
-        withType<JavaCompile> {
-            targetCompatibility = it
-        }
-        withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = it
-        }
-    }
 }
-
-dependencies {
-    implementation("org.apache.felix:org.apache.felix.scr.bnd:1.9.6")
-    implementation("biz.aQute.bnd:biz.aQute.bndlib:5.3.0") {
-        exclude("org.slf4j")
-    }
-}
-
