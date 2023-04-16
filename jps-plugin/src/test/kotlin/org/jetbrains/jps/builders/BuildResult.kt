@@ -1,15 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.osgi.jps.org.jetbrains.jps.builders
+package org.jetbrains.jps.builders
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ObjectUtils
-import gnu.trove.TIntObjectHashMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.ints.IntConsumer
-import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.MessageHandler
 import org.jetbrains.jps.incremental.messages.BuildMessage
@@ -120,7 +118,7 @@ class BuildResult : MessageHandler {
             for (target in targets) {
                 id2Target.put(pd.dataManager.targetsState.getBuildTargetId(target), target)
             }
-            val hashCodeToOutputPath = TIntObjectHashMap<String>()
+            val hashCodeToOutputPath = Int2ObjectOpenHashMap<String>()
             for (target in targets) {
                 stream.println("Begin Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")")
                 val map = pd.dataManager.getSourceToOutputMap(target)
