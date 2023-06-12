@@ -2,7 +2,7 @@
 # libraries
 annotations = "24.0.1"
 felixScr = "1.9.6"
-bndlib = "6.4.0"
+bndlib = "6.4.1"
 
 # plugins
 dokka = "1.8.10"
