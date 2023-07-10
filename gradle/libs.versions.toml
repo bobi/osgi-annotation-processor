@@ -5,7 +5,6 @@ felixScr = "1.9.6"
 bndlib = "6.4.1"
 
 # plugins
-dokka = "1.8.20"
 kotlin = "1.9.0"
 changelog = "2.1.1"
 gradleIntelliJPlugin = "1.15.0"
@@ -22,7 +21,6 @@ bndlib = ["felixScr", "bndlib"]
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
