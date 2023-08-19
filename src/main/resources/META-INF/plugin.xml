@@ -7,8 +7,9 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable id="language.OSGIScrProjectSettings"
+        <projectConfigurable id="com.github.bobi.osgiannotationprocessor.settings.ui.OSGIScrSettingsConfigurable"
                              parentId="language"
+                             displayName="OSGI SCR Annotation Processor"
                              instance="com.github.bobi.osgiannotationprocessor.settings.ui.OSGIScrSettingsConfigurable"/>
 
         <buildProcess.parametersProvider

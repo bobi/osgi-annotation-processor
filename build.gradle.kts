@@ -1,4 +1,3 @@
-
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 

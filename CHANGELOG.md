@@ -3,6 +3,7 @@
 # osgi-annotation-processor Changelog
 
 ## [Unreleased]
+- Fix compatibility issues                       
 
 ## [0.2.1] - 2023-04-16
 
