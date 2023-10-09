@@ -2,7 +2,7 @@
 # libraries
 annotations = "24.0.1"
 felixScr = "1.9.6"
-bndlib = "6.4.1"
+bndlib = "7.0.0"
 
 # plugins
 kotlin = "1.9.10"
