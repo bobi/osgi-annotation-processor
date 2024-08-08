@@ -3,6 +3,7 @@
 # osgi-annotation-processor Changelog
 
 ## [Unreleased]
+- Update supported IDE version
 
 ## [0.2.2] - 2023-08-19
 - Fix compatibility issues

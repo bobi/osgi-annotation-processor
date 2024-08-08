@@ -4,4 +4,4 @@ plugins {
 
 rootProject.name = "osgi-annotation-processor"
 
-include("jps-plugin")
+include(":jps-plugin")
