@@ -16,7 +16,7 @@ import com.intellij.ui.layout.and
 class OSGIScrSettingsConfigurable(private val project: Project) : BoundConfigurable("OSGI SCR Annotation Processor") {
 
     private val specVersionsModel =
-        CollectionComboBoxModel(OSGIScrSpec.values().map { SpecComboDecorator(it) }, SpecComboDecorator(settings.spec))
+        CollectionComboBoxModel(OSGIScrSpec.entries.map { SpecComboDecorator(it) }, SpecComboDecorator(settings.spec))
 
     private val settings get() = OSGIScrProjectSettings.getInstance(project)
 

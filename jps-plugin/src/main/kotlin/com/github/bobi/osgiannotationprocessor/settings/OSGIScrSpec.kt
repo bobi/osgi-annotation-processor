@@ -9,8 +9,6 @@ enum class OSGIScrSpec(val version: String) {
     SPEC_2_0("2.0");
 
     companion object {
-        fun versions() = OSGIScrSpec.values().map { it.version }
-
         fun felixSpec(spec: OSGIScrSpec): OSGIScrSpec {
             if (spec > SPEC_1_2) {
                 return SPEC_1_2
