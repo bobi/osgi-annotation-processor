@@ -16,26 +16,24 @@ class OSGIBuildProcessParametersProvider(private val project: Project) : BuildPr
 
         return if (settings.enabled) jpsClasspath else emptyList()
     }
+}
 
-    companion object {
-        private val jpsClasspath = buildClassPath()
+private val jpsClasspath = buildClassPath()
 
-        private fun buildClassPath(): List<String> {
-            val pluginJarFile = PathManager.getJarForClass(OSGIBuildProcessParametersProvider::class.java)
+private fun buildClassPath(): List<String> {
+    val pluginJarFile = PathManager.getJarForClass(OSGIBuildProcessParametersProvider::class.java)
 
-            val libRoot = pluginJarFile?.parent
+    val libRoot = pluginJarFile?.parent
 
-            return if (pluginJarFile != null && libRoot != null) {
-                val virtualPluginJarFile = VfsUtil.findFileByIoFile(pluginJarFile.toFile(), true)
-                val virtualLibRoot = VfsUtil.findFileByIoFile(libRoot.toFile(), true)
+    return if (pluginJarFile != null && libRoot != null) {
+        val virtualPluginJarFile = VfsUtil.findFileByIoFile(pluginJarFile.toFile(), true)
+        val virtualLibRoot = VfsUtil.findFileByIoFile(libRoot.toFile(), true)
 
-                virtualLibRoot?.children
-                    ?.filter { vf -> vf != virtualPluginJarFile }
-                    ?.mapNotNull { vf -> vf.path }
-                    ?: emptyList()
-            } else {
-                emptyList()
-            }
-        }
+        virtualLibRoot?.children
+            ?.filter { vf -> vf != virtualPluginJarFile }
+            ?.mapNotNull { vf -> vf.path }
+            ?: emptyList()
+    } else {
+        emptyList()
     }
 }
