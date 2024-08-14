@@ -3,6 +3,9 @@
 # osgi-annotation-processor Changelog
 
 ## [Unreleased]
+
+## [0.2.4] - 2024-08-14
+
 - Revert bndlib to version 6.x to support java 8
 
 ## [0.2.3] - 2024-08-08
@@ -38,7 +41,8 @@
 
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/osgi-annotation-processor/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/bobi/osgi-annotation-processor/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/bobi/osgi-annotation-processor/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/bobi/osgi-annotation-processor/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/bobi/osgi-annotation-processor/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/bobi/osgi-annotation-processor/compare/v0.1.0...v0.2.1
