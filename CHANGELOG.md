@@ -3,6 +3,7 @@
 # osgi-annotation-processor Changelog
 
 ## [Unreleased]
+- Revert bndlib to version 6.x to support java 8
 
 ## [0.2.3] - 2024-08-08
 
