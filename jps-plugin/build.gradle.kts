@@ -45,6 +45,10 @@ intellijPlatform {
 }
 
 tasks {
+    prepareJarSearchableOptions {
+        enabled = false
+    }
+
     verifyPlugin {
         enabled = false
     }
