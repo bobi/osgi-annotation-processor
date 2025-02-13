@@ -1,5 +1,6 @@
 package com.github.bobi.osgiannotationprocessor.settings
 
+@SuppressWarnings("unused")
 enum class OSGIScrSpec(val version: String) {
     SPEC_1_0("1.0"),
     SPEC_1_1("1.1"),
