@@ -9,7 +9,7 @@ bndlib = "6.4.1"
 
 # plugins
 changelog = "2.5.0"
-intelliJPlatform = "2.10.5"
+intelliJPlatform = "2.11.0"
 kotlin = "2.3.0"
 kover = "0.9.5"
 qodana = "2025.3.1"
