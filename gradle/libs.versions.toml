@@ -7,13 +7,6 @@ annotations = "26.1.0"
 felixScr = "1.9.6"
 bndlib = "6.4.1"
 
-# plugins
-changelog = "2.5.0"
-intelliJPlatform = "2.18.1"
-kotlin = "2.4.0"
-kover = "0.9.8"
-qodana = "2025.3.1"
-
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 felixScr = { group = "org.apache.felix", name = "org.apache.felix.scr.bnd", version.ref = "felixScr" }
@@ -26,10 +19,3 @@ opentest4j = { group = "org.opentest4j", name = "opentest4j", version.ref = "ope
 [bundles]
 bndlib = ["felixScr", "bndlib"]
 test = ["junit4", "junit5-api", "junit5-engine", "opentest4j"]
-
-[plugins]
-changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }

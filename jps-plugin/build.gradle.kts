@@ -3,19 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("java") // Java support
-    alias(libs.plugins.kotlin) // Kotlin support
-    alias(libs.plugins.intelliJPlatform) // IntelliJ Platform Gradle Plugin
-}
-
-version = providers.gradleProperty("pluginVersion").get()
-
-repositories {
-    mavenCentral()
-
-    // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
-    intellijPlatform {
-        defaultRepositories()
-    }
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.intellij.platform")
 }
 
 dependencies {
@@ -38,11 +27,16 @@ dependencies {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
-    }
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileKotlin") {
+    compilerOptions.jvmTarget.set(
+        providers.gradleProperty("jpsJavaTargetVersion")
+            .map { JvmTarget.fromTarget(JavaVersion.toVersion(it).toString()) }
+    )
+}
+
+tasks.named<JavaCompile>("compileJava") {
+    options.release = providers.gradleProperty("jpsJavaTargetVersion")
+        .map { JavaVersion.toVersion(it).majorVersion.toInt() }
 }
 
 intellijPlatform {
