@@ -58,6 +58,7 @@ class OSGIScrBuildTarget(val configuration: OSGIScrConfiguration, module: JpsMod
         return targetRegistry.getModuleBasedTargets(module, selector)
     }
 
+    @Suppress("UnstableApiUsage") // no public BuildRootDescriptor factory in JPS API
     override fun computeRootDescriptors(
         model: JpsModel,
         index: ModuleExcludeIndex,
