@@ -2,6 +2,11 @@
 <idea-plugin require-restart="true">
     <id>com.github.bobi.osgiannotationprocessor</id>
     <name>OSGI SCR Annotation Processor</name>
+    <description><![CDATA[
+        IntelliJ IDEA plugin that generates OSGi SCR XML files from annotations during IDE builds.
+        Useful for building and running unit tests with the IDE build process.
+        Supports OSGi annotations and Apache Felix annotations
+    ]]></description>
     <vendor>bobi</vendor>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
