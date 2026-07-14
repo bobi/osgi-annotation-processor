@@ -75,7 +75,7 @@ class OSGIScrBuildTarget(val configuration: OSGIScrConfiguration, module: JpsMod
             }
 
             dependencies.recursively()
-                .forEachModule {
+                .processModules {
                     if (it === module) {
                         val root: File? = JpsJavaExtensionService.getInstance().getOutputDirectory(it, false)
                         if (root != null) {
